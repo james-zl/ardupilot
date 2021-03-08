@@ -59,8 +59,24 @@ void Sub::guided_pos_control_start()
     // To-Do: set to current location if disarmed?
     // To-Do: set to stopping point altitude?
     Vector3f stopping_point;
-    stopping_point.z = inertial_nav.get_altitude();
-    wp_nav.get_wp_stopping_point_xy(stopping_point);
+    // stopping_point.z = inertial_nav.get_altitude();
+    // wp_nav.get_wp_stopping_point_xy(stopping_point);
+
+    //set stopping_point to center
+    Vector3f curr_pos = inertial_nav.get_position();
+
+    int xsize = 640;
+    int ysize = 480;
+    int xcenter = xsize / 2;
+    int ycenter = ysize / 2;
+
+    float width_per_pixel = 32 * 0.0254 / xsize;   // in meter
+    float length_per_pixel = 19 * 0.0254 / ysize;   // in meter
+
+
+    stopping_point.x = curr_pos.x - xcenter * width_per_pixel * 100;
+    stopping_point.y = curr_pos.y - ycenter * length_per_pixel * 100;
+    stopping_point.y = curr_pos.z;
 
     // no need to check return status because terrain data is not used
     wp_nav.set_wp_destination(stopping_point, false);
